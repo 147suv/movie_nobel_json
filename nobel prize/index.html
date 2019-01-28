@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <!-- <script src="main.js"></script> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+            <nav class="navbar navbar-inverse">
+                    <div class="container-fluid">
+                      <div class="navbar-header">
+                        <a class="navbar-brand" href="#">LITERATURE </a>
+                      </div>
+                      <ul class="nav navbar-nav">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li><a href="#">more</a></li>
+                        <li><a href="#">books</a></li>
+                        <li><a href="#">inform</a></li>
+                      </ul>
+                    </div>
+                  </nav> 
+                <form class="navbar-form navbar-left" role="search" >
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search" id="user_input">
+                    </div>
+                    <button type="button" class="btn btn-success" >Submit</button>
+                </form>
+                
+    </div> 
+    <div class="container">
+        <ul class="list-group" id="result"></ul>
+
+    </div>             
+    <script>
+        //making a request
+let search_url = 'http://api.nobelprize.org/v1/prize.json?year&category=literature'; 
+let xhr = new XMLHttpRequest(); 
+xhr.onload = function() {
+    if(this.status === 200){
+        let response = JSON.parse(xhr.responseText)
+        // console.log(response)
+        let post = response.prizes
+        // console.log(post)
+        post.forEach(function (prize,index) {
+            let $result = document.getElementById("result")
+            let $input = document.getElementById("user_input")
+            let $li = document.createElement("li");
+            $li.setAttribute("class","list-group-item list-group-item-info")
+            let $p  = document.createElement('p')
+            $p.setAttribute("class","text-left")
+            $p.innerHTML =`${post[index].laureates[0].firstname}_${post[index].laureates[0].surname}_${post[index].year}<br/>${post[index].laureates[0].motivation}`
+            // + "_"+`${post[index].laureates[0].surname}`+
+            // "_"+`${post[index].year}`+"<br/>"+
+            // `${post[index].laureates[0].motivation}`
+            $li.appendChild($p)
+            $result.appendChild($li);
+            // console.log($li)
+            let filter_val = $input.value.toLowerCase();
+            console.log(Array.from($li))
+            $input.addEventListener("keyup",function() {
+               Array.from($li).forEach(function(winner,index){
+                   const textval =  $p.textContent || $p.innerText;
+                   if (textVal.tolowerCase().indexOf(filter_val) > -1) {
+      $li.style.display = "block";
+    } else {
+      $li.style.display = "none";
+    }
+               })
+                
+            })
+        })
+    }
+}
+ xhr.open("GET", search_url,);
+ xhr.send()
+   </script>
+</body>
+</html>
